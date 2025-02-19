@@ -1,0 +1,72 @@
+Question: https://leetcode.com/problems/design-twitter/description/
+
+Solution:
+class Twitter {
+    Map<Integer,Set<Node>> userFeedMap=new HashMap<>(); 
+    Map<Integer,Set<Integer>> followerMap=new HashMap<>();
+    int time=0;
+    public Twitter() {
+        
+    }
+    
+    public void postTweet(int userId, int tweetId) {
+        Node node=new Node(time++,tweetId);
+        userFeedMap.computeIfAbsent(userId,val->new HashSet<>()).add(node);        
+    }
+    
+    public List<Integer> getNewsFeed(int userId) {
+        Queue<Node> queue=new PriorityQueue<Node>(Comparator.comparingInt(node->node.time));
+        if(!followerMap.containsKey(userId)){
+            follow(userId,userId);
+        }
+        for(int id:followerMap.get(userId)){
+            if(userFeedMap.containsKey(id)){
+                for(Node node:userFeedMap.get(id)){
+                    queue.offer(node);                            
+                    if(queue.size()>10){
+                        queue.poll();
+                    }                        
+                }
+            }
+        }
+        LinkedList<Integer> result=new LinkedList<>();
+        while(!queue.isEmpty()){
+            result.addFirst(queue.poll().tweetId);
+        }
+        
+        return result;
+    }
+    
+    public void follow(int followerId, int followeeId) {
+        followerMap.computeIfAbsent(followerId,val->{
+            Set<Integer> set=new HashSet<>();
+            set.add(val);
+            return set;
+        }).add(followeeId);
+    }
+    
+    public void unfollow(int followerId, int followeeId) {
+        if(followerMap.containsKey(followerId)){
+            followerMap.get(followerId).remove(followeeId);
+        }
+    }
+}
+
+class Node{
+    int time;
+    int tweetId;
+
+    public Node(int time,int tweetId){
+        this.time=time;
+        this.tweetId=tweetId;
+    }
+}
+
+/**
+ * Your Twitter object will be instantiated and called as such:
+ * Twitter obj = new Twitter();
+ * obj.postTweet(userId,tweetId);
+ * List<Integer> param_2 = obj.getNewsFeed(userId);
+ * obj.follow(followerId,followeeId);
+ * obj.unfollow(followerId,followeeId);
+ */

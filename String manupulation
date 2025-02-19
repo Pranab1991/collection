@@ -1,0 +1,85 @@
+Question : https://leetcode.com/problems/reverse-words-in-a-string/
+
+Sol:
+
+class Solution {
+    public String reverseWords(String s) {
+        String[] strArrays=s.split(" ");
+        StringBuilder sb=new StringBuilder();
+        for(int index=strArrays.length-1;index>=0;index--){
+            if(strArrays[index]!=""){
+                sb.append(strArrays[index]);
+                sb.append(" ");
+            }
+        }
+        sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
+    }
+}
+
+
+Question: https://leetcode.com/problems/group-shifted-strings/description/
+
+Sol:
+class Solution {
+    public List<List<String>> groupStrings(String[] strings) {
+        Map<String,List<String>> storage=new HashMap<>();
+        for(String string:strings){
+            String str=computeNacent(string);
+            storage.computeIfAbsent(str,k->new ArrayList<>()).add(string);
+        }
+        List<List<String>> result=new ArrayList<>();
+        for(List<String> value:storage.values()){
+            result.add(value);
+        }
+        return result;
+    }
+
+    public String computeNacent(String str){
+        int n=str.length();
+        int smallestReduction=str.charAt(0)-'a';
+        
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<n;i++){
+            char ch=str.charAt(i);
+            sb.append((ch-'a')>=smallestReduction?(char)(ch-smallestReduction):
+                                (char)('z'-(smallestReduction-(ch-'a')-1)));
+        }
+        return sb.toString();
+    }
+}
+
+Question: https://leetcode.com/problems/reverse-vowels-of-a-string/description/
+
+
+Sol:
+class Solution {
+    public String reverseVowels(String s) {
+        int start=0,end=s.length()-1;
+        Set<Character> set=new HashSet<>(Arrays.asList('a','e','i','o','u','A','E','I','O','U'));
+        StringBuilder sb=new StringBuilder(s);
+        while(start<end){
+            char ss=sb.charAt(start);
+            char ee=sb.charAt(end);
+            if(set.contains(ss)&&set.contains(ee)){
+                swap(sb,start,end);
+                start++;
+                end--;
+            }else if(set.contains(ss)){
+                end--;
+            }else if(set.contains(ee)){
+                start++;
+            }else{
+                start++;
+                end--;
+            }            
+        }
+        return sb.toString();
+    }
+    
+    public void swap(StringBuilder sb,int index,int index2){
+        char temp=sb.charAt(index);
+        sb.setCharAt(index,sb.charAt(index2));
+        sb.setCharAt(index2,temp);
+    }
+}
